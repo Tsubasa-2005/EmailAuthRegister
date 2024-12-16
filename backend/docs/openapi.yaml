@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: User Registration API
+  version: 1.0.0
+  license:
+      name: MIT
+      url: https://github.com/Tsubasa-2005/EmailAuthResister
+servers:
+    - url: http://127.0.0.1:8080
+paths:
+  /ping:
+    get:
+      operationId: Ping
+      summary: Ping the server
+      description: Check if the server is running.
+      responses:
+        '200':
+          description: Server is running
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    default: pong
+      security: [ ]
+  /send-verification:
+    post:
+      summary: Send email verification
+      operationId: SendEmailVerification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+      responses:
+        200:
+          description: Email sent successfully
+        500:
+          $ref: './components/errors.yaml#/components/responses/internalServerError'
+      security: [ ]
+  /verify-email:
+    post:
+      summary: Verify email
+      operationId: VerifyEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  format: uuid
+      responses:
+        200:
+          description: Email verified
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - email
+                properties:
+                  email:
+                    type: string
+        401:
+          $ref: './components/errors.yaml#/components/responses/unauthorized'
+      security: [ ]
+  /complete-registration:
+    post:
+      summary: Complete user registration
+      operationId: CompleteUserRegistration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - email
+                - name
+                - password
+              properties:
+                token:
+                  type: string
+                  format: uuid
+                email:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - token
+                properties:
+                  token:
+                      type: string
+        400:
+          $ref: './components/errors.yaml#/components/responses/badRequest'
+        401:
+          $ref: './components/errors.yaml#/components/responses/unauthorized'
+      security: [ ]
+  /users:
+    get:
+      summary: Get all users
+      operationId: GetAllUsers
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas.yaml#/components/schemas/user'
+      security:
+        - BearerAuth: [ ]
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

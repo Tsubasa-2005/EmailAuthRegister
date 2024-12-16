@@ -1,0 +1,40 @@
+components:
+  schemas:
+    user:
+      type: object
+      required:
+        - id
+        - email
+        - password
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the user.
+          example: 1
+        email:
+          type: string
+          format: email
+          description: Email address of the user.
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          description: Encrypted password of the user.
+        name:
+          type: string
+          description: Full name of the user.
+          example: John Doe
+        created_at:
+          type: string
+          format: date-time
+          description: User creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last profile update timestamp
+        deleted_at:
+          type: string
+          format: date-time
+          description: Soft-delete timestamp if the user is removed
