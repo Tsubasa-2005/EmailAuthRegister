@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Tsubasa-2005/EmailAuthResister/ui"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,7 +41,7 @@ import (
 func SetupAndRequest(t *testing.T, ctx context.Context, method, path, token string, body io.Reader) *http.Response {
 	t.Helper()
 
-	router, err := ui.SetupRouter(ctx)
+	router, err := SetupRouter(ctx)
 	require.NoError(t, err)
 
 	server := httptest.NewServer(router)
