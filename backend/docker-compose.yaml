@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  email-auth-register-api-db:
+    image: postgres:16.1
+    container_name: email-auth-register-api-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=email_auth_register_api
+    volumes:
+      - local_email_auth_register_api_volume:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+
+volumes:
+  local_email_auth_register_api_volume:
