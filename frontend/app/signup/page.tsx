@@ -9,7 +9,7 @@ import {ArrowRightIcon, CheckCircleIcon, MailIcon, TimerIcon, UserPlusIcon} from
 export default function EmailVerificationPage() {
     const router = useRouter();
 
-    const { error, isSubmitting, sendVerificationEmail, successMessage, register, verifyToken, email, expired, resetError } = useEmailVerificationAdapter();
+    const { error, isSubmitting, sendVerificationEmail, register, verifyToken, email, expired, resetError } = useEmailVerificationAdapter();
     const searchParams = useSearchParams();
 
     const[registerEmail, setRegisterEmail] = useState("");
@@ -25,7 +25,7 @@ export default function EmailVerificationPage() {
             verifyToken({verifyEmailRequest: {token}}).then(r =>r);
             setStage("complete");
         }
-    }, [searchParams]);
+    }, [searchParams, verifyToken]);
 
     const handleEmailSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -306,6 +306,13 @@ export default function EmailVerificationPage() {
                                 placeholder="Repeat your password"
                             />
                         </div>
+
+                        {passError && (
+                            <p className="text-red-500 text-sm flex items-center">
+                                <span className="mr-2">❌</span>
+                                {passError}
+                            </p>
+                        )}
 
                         {/* Error Message */}
                         {error && (

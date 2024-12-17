@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import {CompleteUserRegistrationOperationRequest, LoginOperationRequest} from "@/generated";
+import {CompleteUserRegistrationOperationRequest} from "@/generated";
 import {setCookie} from "@/utils/cookie";
 import apiClient from "@/app/api/client";
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
             const errorData = await response.raw.json();
             return NextResponse.json({ error: errorData.error || 'ログインに失敗しました' }, { status: response.raw.status });
         }
-    } catch (error: any) {
-        return NextResponse.json({ message: "error" }, { status: error.response.status });
+    } catch  {
+        return NextResponse.json({ message: "error" }, { status: 500 });
     }
 }

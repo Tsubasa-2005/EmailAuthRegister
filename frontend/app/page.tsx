@@ -9,7 +9,8 @@ export default function AuthLanding() {
           </h1>
 
           <p className="text-gray-600 dark:text-gray-400 max-w-md">
-            Join our community and start your journey. Whether you're new or returning, we're excited to have you!
+            Join our community and start your journey. Whether you&apos;re new or returning, we&apos;re excited to have
+            you!
           </p>
 
           <div className="flex gap-4 items-center flex-col sm:flex-row">

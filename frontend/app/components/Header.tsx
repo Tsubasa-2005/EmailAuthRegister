@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import {HomeIcon, MailIcon, UserIcon, UserPlusIcon} from "lucide-react";
+import { MailIcon, UserIcon, UserPlusIcon} from "lucide-react";
 import React from "react";
 
 export default function Header() {

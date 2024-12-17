@@ -5,7 +5,6 @@ import { postLoginHelper } from "@/api/login/postHelper";
 export default function useLoginAdapter() {
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const login = useCallback(
         async (params: LoginOperationRequest) => {
@@ -22,7 +21,6 @@ export default function useLoginAdapter() {
     return {
         error,
         isSubmitting,
-        successMessage,
         login
     };
 }

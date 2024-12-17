@@ -7,7 +7,7 @@ import {useRouter} from "next/navigation";
 
 export default function SignIn() {
     const router = useRouter();
-    const { error, isSubmitting, successMessage, login } = useLoginAdapter();
+    const { error, isSubmitting, login } = useLoginAdapter();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
@@ -28,9 +28,6 @@ export default function SignIn() {
                     Sign In to Your Account
                 </h2>
 
-                {successMessage && (
-                    <p className="text-green-500 text-center mb-4">{successMessage}</p>
-                )}
                 {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,7 +107,7 @@ export default function SignIn() {
 
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/signup" className="font-medium text-black hover:text-gray-700 dark:text-white dark:hover:text-gray-300">
                             Sign up
                         </Link>
