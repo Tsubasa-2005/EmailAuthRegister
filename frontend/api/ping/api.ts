@@ -1,17 +1,17 @@
-import apiClient from "@/api/client";
+import apiClient from '@/api/client';
 
 export async function pingAPI(): Promise<{
-    success: boolean;
+  success: boolean;
 }> {
-    try {
-        await apiClient.ping();
+  try {
+    await apiClient.ping();
 
-        return {
-            success: true,
-        };
-    } catch {
-        return {
-            success: false,
-        };
-    }
+    return {
+      success: true,
+    };
+  } catch {
+    return {
+      success: false,
+    };
+  }
 }

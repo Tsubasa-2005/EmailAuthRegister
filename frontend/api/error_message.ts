@@ -1,7 +1,8 @@
-export const unexpectedErrorMessage = '予期しないエラーが発生しました。もう一度やり直してください。';
+export const unexpectedErrorMessage =
+  '予期しないエラーが発生しました。もう一度やり直してください。';
 
 export async function handleError(
-  error: unknown,
+  error: unknown
 ): Promise<{ message: string; status: number }> {
   if (error instanceof Error && 'response' in error) {
     const responseError = error as { response: Response };

@@ -17,7 +17,7 @@ const apiClient = new DefaultApi(
     basePath: process.env.API_BASE_URL,
     accessToken: async () => await getTokenAsync(),
     middleware: [loggingMiddleware],
-  }),
+  })
 );
 
 export default apiClient;

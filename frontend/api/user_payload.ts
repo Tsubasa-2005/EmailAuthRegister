@@ -1,4 +1,4 @@
-import {parseToken, UserTokenPayload} from "@/utils/token";
+import { parseToken, UserTokenPayload } from '@/utils/token';
 
 export async function fetchCurrentUser(): Promise<{
   success: boolean;
@@ -18,13 +18,13 @@ export async function fetchCurrentUser(): Promise<{
   const token = data.token;
 
   const user = parseToken(token);
-    if (!user) {
-        return {
-        success: false,
-        user: {} as UserTokenPayload,
-        message: 'Failed to parse token.',
-        };
-    }
+  if (!user) {
+    return {
+      success: false,
+      user: {} as UserTokenPayload,
+      message: 'Failed to parse token.',
+    };
+  }
 
   return {
     success: true,

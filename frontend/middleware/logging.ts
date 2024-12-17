@@ -10,7 +10,7 @@ interface LogData {
 
 async function sendLogToServer(level: string, message: string, data: LogData) {
   try {
-    await fetch("/api/log", {
+    await fetch('/api/log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ level, message, data }),

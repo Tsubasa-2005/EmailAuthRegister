@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write ."
+    "format:": "prettier --write 'api/**/*' 'app/**/*' 'constants/**/*' 'middleware/**/*' 'utils/**/*'"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",

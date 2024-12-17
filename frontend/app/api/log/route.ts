@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(
       { status: 'Error logging message' },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
