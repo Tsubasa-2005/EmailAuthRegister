@@ -27,6 +27,9 @@ select * from email_verification_tokens where token = $1;
 -- name: TestGetEmailVerificationTokenByEmail :one
 select * from email_verification_tokens where email = $1;
 
+-- name: TestExistsEmailVerificationTokenByEmail :one
+select exists(select 1 from email_verification_tokens where email = $1);
+
 -- name: TestCreateEmailVerificationToken :one
 insert into email_verification_tokens (token, email, expires_at, created_at) values ($1, $2, $3, $4) returning *;
 
