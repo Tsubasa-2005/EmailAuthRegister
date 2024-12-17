@@ -1,0 +1,11 @@
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number to return
+      required: true
+      schema:
+        type: integer
+        default: 1
+        minimum: 1

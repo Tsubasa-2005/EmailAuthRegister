@@ -27,6 +27,37 @@ paths:
                     type: string
                     default: pong
       security: [ ]
+  /login:
+    post:
+      summary: Login
+      operationId: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        200:
+          description: User logged in successfully
+          headers:
+            Set-Cookie:
+              required: true
+              schema:
+                type: string
+                example: "Authorization: Bearer <token>"
+        400:
+          $ref: './components/errors.yaml#/components/responses/badRequest'
+      security: []
   /send-verification:
     post:
       summary: Send email verification
@@ -111,15 +142,12 @@ paths:
       responses:
         200:
           description: User registered successfully
-          content:
-            application/json:
+          headers:
+            Set-Cookie:
+              required: true
               schema:
-                type: object
-                required:
-                  - token
-                properties:
-                  token:
-                      type: string
+                type: string
+                example: "Authorization: Bearer <token>"
         400:
           $ref: './components/errors.yaml#/components/responses/badRequest'
         401:
@@ -129,15 +157,29 @@ paths:
     get:
       summary: Get all users
       operationId: GetAllUsers
+      parameters:
+        - $ref: './components/queryParameters.yaml#/components/parameters/PageParam'
       responses:
         200:
           description: List of users
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components/schemas.yaml#/components/schemas/user'
+                type: object
+                required:
+                  - users
+                  - totalPage
+                properties:
+                    users:
+                      type: array
+                      items:
+                        $ref: './components/responseBodies.yaml#/components/schemas/user'
+                    totalPage:
+                      type: integer
+                      description: Total number of pages
+                      minimum: 1
+        400:
+          $ref: './components/errors.yaml#/components/responses/badRequest'
       security:
         - BearerAuth: [ ]
 

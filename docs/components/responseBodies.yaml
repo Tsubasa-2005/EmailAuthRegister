@@ -1,0 +1,16 @@
+components:
+  schemas:
+    user:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          $ref: './schemas.yaml#/components/schemas/user/properties/id'
+        name:
+          $ref: './schemas.yaml#/components/schemas/user/properties/name'
+        email:
+          $ref: './schemas.yaml#/components/schemas/user/properties/email'
+
