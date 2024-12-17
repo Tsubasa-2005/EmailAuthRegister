@@ -9,19 +9,16 @@ export async function postCompleteRegistrationHelper(
     params: CompleteUserRegistrationOperationRequest,
     setError: Dispatch<SetStateAction<string | null>>,
     successParams: SuccessMessageParams,
-): Promise<string> {
+): Promise<void> {
     try {
         const data = await postCompleteRegistrationAPI(params);
 
         if (data.success) {
             successMessageHelper(successParams);
-            return data.token;
         } else {
             setError(data.message);
-            return '';
         }
     } catch {
         setError(unexpectedErrorMessage);
-        return '';
     }
 }
