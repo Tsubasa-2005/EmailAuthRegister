@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func CreateUser(t *testing.T, ctx context.Context, db rdb.DBTX, f func(target *rdb.TestCreateUserParams)) rdb.User {
+func CreateUser(t *testing.T, ctx context.Context, db rdb.DBTX, f func(target *rdb.TestCreateUserParams)) (rdb.User, string) {
 	t.Helper()
 
 	target := &rdb.TestCreateUserParams{
@@ -25,12 +25,21 @@ func CreateUser(t *testing.T, ctx context.Context, db rdb.DBTX, f func(target *r
 		f(target)
 	}
 
+	hashPass, err := util.GeneratePasswordHash(target.Password)
+	require.NoError(t, err)
+
 	created, err := rdb.New(db).TestCreateUser(ctx, rdb.TestCreateUserParams{
 		Email:     target.Email,
-		Password:  target.Password,
+		Password:  hashPass,
 		Name:      target.Name,
 		CreatedAt: target.CreatedAt,
 		UpdatedAt: target.UpdatedAt,
+	})
+	require.NoError(t, err)
+
+	token, err := util.GenerateToken("EmailAuthResisterTest", util.UserToken{
+		ID:   created.ID,
+		Name: created.Name,
 	})
 	require.NoError(t, err)
 
@@ -38,5 +47,5 @@ func CreateUser(t *testing.T, ctx context.Context, db rdb.DBTX, f func(target *r
 		require.NoError(t, rdb.New(db).TestDeleteUser(ctx, created.ID))
 	})
 
-	return created
+	return created, token
 }
