@@ -48,6 +48,15 @@ func (q *Queries) DeleteEmailVerificationToken(ctx context.Context, token pgtype
 	return err
 }
 
+const deleteEmailVerificationTokensByEmail = `-- name: DeleteEmailVerificationTokensByEmail :exec
+delete from email_verification_tokens where email = $1
+`
+
+func (q *Queries) DeleteEmailVerificationTokensByEmail(ctx context.Context, email string) error {
+	_, err := q.db.Exec(ctx, deleteEmailVerificationTokensByEmail, email)
+	return err
+}
+
 const getEmailVerificationToken = `-- name: GetEmailVerificationToken :one
 select token, email, expires_at, created_at from email_verification_tokens where token = $1
 `
