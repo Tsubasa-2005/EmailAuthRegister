@@ -3,8 +3,6 @@
 package api
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -23,6 +21,8 @@ func (s *BadRequest) SetMessage(val string) {
 }
 
 func (*BadRequest) completeUserRegistrationRes() {}
+func (*BadRequest) getAllUsersRes()              {}
+func (*BadRequest) loginRes()                    {}
 func (*BadRequest) sendEmailVerificationRes()    {}
 
 type BearerAuth struct {
@@ -39,18 +39,19 @@ func (s *BearerAuth) SetToken(val string) {
 	s.Token = val
 }
 
+// CompleteUserRegistrationOK is response for CompleteUserRegistration operation.
 type CompleteUserRegistrationOK struct {
-	Token string `json:"token"`
+	SetCookie string
 }
 
-// GetToken returns the value of Token.
-func (s *CompleteUserRegistrationOK) GetToken() string {
-	return s.Token
+// GetSetCookie returns the value of SetCookie.
+func (s *CompleteUserRegistrationOK) GetSetCookie() string {
+	return s.SetCookie
 }
 
-// SetToken sets the value of Token.
-func (s *CompleteUserRegistrationOK) SetToken(val string) {
-	s.Token = val
+// SetSetCookie sets the value of SetCookie.
+func (s *CompleteUserRegistrationOK) SetSetCookie(val string) {
+	s.SetCookie = val
 }
 
 func (*CompleteUserRegistrationOK) completeUserRegistrationRes() {}
@@ -102,6 +103,38 @@ func (s *CompleteUserRegistrationReq) SetPassword(val string) {
 	s.Password = val
 }
 
+type Email string
+
+type GetAllUsersOK struct {
+	Users []User `json:"users"`
+	// Total number of pages.
+	TotalPage int `json:"totalPage"`
+}
+
+// GetUsers returns the value of Users.
+func (s *GetAllUsersOK) GetUsers() []User {
+	return s.Users
+}
+
+// GetTotalPage returns the value of TotalPage.
+func (s *GetAllUsersOK) GetTotalPage() int {
+	return s.TotalPage
+}
+
+// SetUsers sets the value of Users.
+func (s *GetAllUsersOK) SetUsers(val []User) {
+	s.Users = val
+}
+
+// SetTotalPage sets the value of TotalPage.
+func (s *GetAllUsersOK) SetTotalPage(val int) {
+	s.TotalPage = val
+}
+
+func (*GetAllUsersOK) getAllUsersRes() {}
+
+type ID int64
+
 type InternalServerError struct {
 	Message string `json:"message"`
 }
@@ -118,51 +151,49 @@ func (s *InternalServerError) SetMessage(val string) {
 
 func (*InternalServerError) sendEmailVerificationRes() {}
 
-// NewOptDateTime returns new OptDateTime with value set to v.
-func NewOptDateTime(v time.Time) OptDateTime {
-	return OptDateTime{
-		Value: v,
-		Set:   true,
-	}
+// LoginOK is response for Login operation.
+type LoginOK struct {
+	SetCookie string
 }
 
-// OptDateTime is optional time.Time.
-type OptDateTime struct {
-	Value time.Time
-	Set   bool
+// GetSetCookie returns the value of SetCookie.
+func (s *LoginOK) GetSetCookie() string {
+	return s.SetCookie
 }
 
-// IsSet returns true if OptDateTime was set.
-func (o OptDateTime) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptDateTime) Reset() {
-	var v time.Time
-	o.Value = v
-	o.Set = false
+// SetSetCookie sets the value of SetCookie.
+func (s *LoginOK) SetSetCookie(val string) {
+	s.SetCookie = val
 }
 
-// SetTo sets value to v.
-func (o *OptDateTime) SetTo(v time.Time) {
-	o.Set = true
-	o.Value = v
+func (*LoginOK) loginRes() {}
+
+type LoginReq struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-// Get returns value and boolean that denotes whether value was set.
-func (o OptDateTime) Get() (v time.Time, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
+// GetEmail returns the value of Email.
+func (s *LoginReq) GetEmail() string {
+	return s.Email
 }
 
-// Or returns value if set, or given parameter if does not.
-func (o OptDateTime) Or(d time.Time) time.Time {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
+// GetPassword returns the value of Password.
+func (s *LoginReq) GetPassword() string {
+	return s.Password
 }
+
+// SetEmail sets the value of Email.
+func (s *LoginReq) SetEmail(val string) {
+	s.Email = val
+}
+
+// SetPassword sets the value of Password.
+func (s *LoginReq) SetPassword(val string) {
+	s.Password = val
+}
+
+type Name string
 
 type PingOK struct {
 	Message string `json:"message"`
@@ -216,90 +247,39 @@ func (*Unauthorized) verifyEmailRes()              {}
 
 // Ref: #/components/schemas/user
 type User struct {
-	// Unique identifier for the user.
-	ID int64 `json:"id"`
-	// Email address of the user.
-	Email string `json:"email"`
-	// Encrypted password of the user.
-	Password string `json:"password"`
-	// Full name of the user.
-	Name string `json:"name"`
-	// User creation timestamp.
-	CreatedAt OptDateTime `json:"created_at"`
-	// Last profile update timestamp.
-	UpdatedAt OptDateTime `json:"updated_at"`
-	// Soft-delete timestamp if the user is removed.
-	DeletedAt OptDateTime `json:"deleted_at"`
+	ID    ID    `json:"id"`
+	Name  Name  `json:"name"`
+	Email Email `json:"email"`
 }
 
 // GetID returns the value of ID.
-func (s *User) GetID() int64 {
+func (s *User) GetID() ID {
 	return s.ID
 }
 
-// GetEmail returns the value of Email.
-func (s *User) GetEmail() string {
-	return s.Email
-}
-
-// GetPassword returns the value of Password.
-func (s *User) GetPassword() string {
-	return s.Password
-}
-
 // GetName returns the value of Name.
-func (s *User) GetName() string {
+func (s *User) GetName() Name {
 	return s.Name
 }
 
-// GetCreatedAt returns the value of CreatedAt.
-func (s *User) GetCreatedAt() OptDateTime {
-	return s.CreatedAt
-}
-
-// GetUpdatedAt returns the value of UpdatedAt.
-func (s *User) GetUpdatedAt() OptDateTime {
-	return s.UpdatedAt
-}
-
-// GetDeletedAt returns the value of DeletedAt.
-func (s *User) GetDeletedAt() OptDateTime {
-	return s.DeletedAt
+// GetEmail returns the value of Email.
+func (s *User) GetEmail() Email {
+	return s.Email
 }
 
 // SetID sets the value of ID.
-func (s *User) SetID(val int64) {
+func (s *User) SetID(val ID) {
 	s.ID = val
 }
 
-// SetEmail sets the value of Email.
-func (s *User) SetEmail(val string) {
-	s.Email = val
-}
-
-// SetPassword sets the value of Password.
-func (s *User) SetPassword(val string) {
-	s.Password = val
-}
-
 // SetName sets the value of Name.
-func (s *User) SetName(val string) {
+func (s *User) SetName(val Name) {
 	s.Name = val
 }
 
-// SetCreatedAt sets the value of CreatedAt.
-func (s *User) SetCreatedAt(val OptDateTime) {
-	s.CreatedAt = val
-}
-
-// SetUpdatedAt sets the value of UpdatedAt.
-func (s *User) SetUpdatedAt(val OptDateTime) {
-	s.UpdatedAt = val
-}
-
-// SetDeletedAt sets the value of DeletedAt.
-func (s *User) SetDeletedAt(val OptDateTime) {
-	s.DeletedAt = val
+// SetEmail sets the value of Email.
+func (s *User) SetEmail(val Email) {
+	s.Email = val
 }
 
 type VerifyEmailOK struct {

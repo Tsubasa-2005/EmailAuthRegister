@@ -27,7 +27,16 @@ func (UnimplementedHandler) CompleteUserRegistration(ctx context.Context, req *C
 // Get all users.
 //
 // GET /users
-func (UnimplementedHandler) GetAllUsers(ctx context.Context) (r []User, _ error) {
+func (UnimplementedHandler) GetAllUsers(ctx context.Context, params GetAllUsersParams) (r GetAllUsersRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// Login implements Login operation.
+//
+// Login.
+//
+// POST /login
+func (UnimplementedHandler) Login(ctx context.Context, req *LoginReq) (r LoginRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

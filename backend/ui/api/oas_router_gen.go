@@ -81,6 +81,27 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				elem = origElem
+			case 'l': // Prefix: "login"
+				origElem := elem
+				if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "POST":
+						s.handleLoginRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "POST")
+					}
+
+					return
+				}
+
+				elem = origElem
 			case 'p': // Prefix: "ping"
 				origElem := elem
 				if l := len("ping"); len(elem) >= l && elem[0:l] == "ping" {
@@ -276,6 +297,31 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.summary = "Complete user registration"
 						r.operationID = "CompleteUserRegistration"
 						r.pathPattern = "/complete-registration"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+				elem = origElem
+			case 'l': // Prefix: "login"
+				origElem := elem
+				if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "POST":
+						r.name = "Login"
+						r.summary = "Login"
+						r.operationID = "Login"
+						r.pathPattern = "/login"
 						r.args = args
 						r.count = 0
 						return r, true

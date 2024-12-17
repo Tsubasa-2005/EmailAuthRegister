@@ -19,7 +19,13 @@ type Handler interface {
 	// Get all users.
 	//
 	// GET /users
-	GetAllUsers(ctx context.Context) ([]User, error)
+	GetAllUsers(ctx context.Context, params GetAllUsersParams) (GetAllUsersRes, error)
+	// Login implements Login operation.
+	//
+	// Login.
+	//
+	// POST /login
+	Login(ctx context.Context, req *LoginReq) (LoginRes, error)
 	// Ping implements Ping operation.
 	//
 	// Check if the server is running.

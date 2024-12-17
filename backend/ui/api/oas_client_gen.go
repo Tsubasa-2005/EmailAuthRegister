@@ -15,6 +15,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
 	"go.opentelemetry.io/otel/trace"
 
+	"github.com/ogen-go/ogen/conv"
 	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/ogen-go/ogen/otelogen"
@@ -34,7 +35,13 @@ type Invoker interface {
 	// Get all users.
 	//
 	// GET /users
-	GetAllUsers(ctx context.Context) ([]User, error)
+	GetAllUsers(ctx context.Context, params GetAllUsersParams) (GetAllUsersRes, error)
+	// Login invokes Login operation.
+	//
+	// Login.
+	//
+	// POST /login
+	Login(ctx context.Context, request *LoginReq) (LoginRes, error)
 	// Ping invokes Ping operation.
 	//
 	// Check if the server is running.
@@ -185,12 +192,12 @@ func (c *Client) sendCompleteUserRegistration(ctx context.Context, request *Comp
 // Get all users.
 //
 // GET /users
-func (c *Client) GetAllUsers(ctx context.Context) ([]User, error) {
-	res, err := c.sendGetAllUsers(ctx)
+func (c *Client) GetAllUsers(ctx context.Context, params GetAllUsersParams) (GetAllUsersRes, error) {
+	res, err := c.sendGetAllUsers(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetAllUsers(ctx context.Context) (res []User, err error) {
+func (c *Client) sendGetAllUsers(ctx context.Context, params GetAllUsersParams) (res GetAllUsersRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("GetAllUsers"),
 		semconv.HTTPMethodKey.String("GET"),
@@ -229,6 +236,24 @@ func (c *Client) sendGetAllUsers(ctx context.Context) (res []User, err error) {
 	var pathParts [1]string
 	pathParts[0] = "/users"
 	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.IntToString(params.Page))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
 
 	stage = "EncodeRequest"
 	r, err := ht.NewRequest(ctx, "GET", u)
@@ -278,6 +303,81 @@ func (c *Client) sendGetAllUsers(ctx context.Context) (res []User, err error) {
 
 	stage = "DecodeResponse"
 	result, err := decodeGetAllUsersResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// Login invokes Login operation.
+//
+// Login.
+//
+// POST /login
+func (c *Client) Login(ctx context.Context, request *LoginReq) (LoginRes, error) {
+	res, err := c.sendLogin(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendLogin(ctx context.Context, request *LoginReq) (res LoginRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("Login"),
+		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/login"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "Login",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/login"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeLoginRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeLoginResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

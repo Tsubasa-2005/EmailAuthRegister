@@ -5,6 +5,14 @@ type CompleteUserRegistrationRes interface {
 	completeUserRegistrationRes()
 }
 
+type GetAllUsersRes interface {
+	getAllUsersRes()
+}
+
+type LoginRes interface {
+	loginRes()
+}
+
 type SendEmailVerificationRes interface {
 	sendEmailVerificationRes()
 }
