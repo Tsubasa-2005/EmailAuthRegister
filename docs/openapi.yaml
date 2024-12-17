@@ -47,6 +47,8 @@ paths:
       responses:
         200:
           description: Email sent successfully
+        400:
+          $ref: './components/errors.yaml#/components/responses/badRequest'
         500:
           $ref: './components/errors.yaml#/components/responses/internalServerError'
       security: [ ]

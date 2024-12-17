@@ -47,6 +47,8 @@ paths:
       responses:
         '200':
           description: Email sent successfully
+        '400':
+          $ref: '#/components/responses/badRequest'
         '500':
           $ref: '#/components/responses/internalServerError'
       security: []
@@ -145,6 +147,17 @@ components:
       scheme: bearer
       bearerFormat: JWT
   responses:
+    badRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
     internalServerError:
       description: Internal Server Error
       content:
@@ -158,17 +171,6 @@ components:
                 type: string
     unauthorized:
       description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - message
-            properties:
-              message:
-                type: string
-    badRequest:
-      description: Bad Request
       content:
         application/json:
           schema:
