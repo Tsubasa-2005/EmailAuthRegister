@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countActiveUsers = `-- name: CountActiveUsers :one
+select count(*) from users where deleted_at is null
+`
+
+func (q *Queries) CountActiveUsers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countActiveUsers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createUser = `-- name: CreateUser :one
 insert into users (email, password, name, created_at, updated_at) values ($1, $2, $3, $4, $5) returning id, email, password, name, created_at, updated_at, deleted_at
 `
@@ -55,12 +66,36 @@ func (q *Queries) ExistsUserByEmail(ctx context.Context, email string) (bool, er
 	return exists, err
 }
 
-const getUsers = `-- name: GetUsers :many
-select id, email, password, name, created_at, updated_at, deleted_at from users where id = $1 and deleted_at is null
+const getUserByEmail = `-- name: GetUserByEmail :one
+select id, email, password, name, created_at, updated_at, deleted_at from users where email = $1 and deleted_at is null
 `
 
-func (q *Queries) GetUsers(ctx context.Context, id int64) ([]User, error) {
-	rows, err := q.db.Query(ctx, getUsers, id)
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Password,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getUsers = `-- name: GetUsers :many
+select id, email, password, name, created_at, updated_at, deleted_at from users where deleted_at is null limit $1 offset $2
+`
+
+type GetUsersParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUsers, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -85,25 +120,6 @@ func (q *Queries) GetUsers(ctx context.Context, id int64) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const getUsersByEmail = `-- name: GetUsersByEmail :one
-select id, email, password, name, created_at, updated_at, deleted_at from users where email = $1 and deleted_at is null
-`
-
-func (q *Queries) GetUsersByEmail(ctx context.Context, email string) (User, error) {
-	row := q.db.QueryRow(ctx, getUsersByEmail, email)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Password,
-		&i.Name,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-	)
-	return i, err
 }
 
 const softDeleteUsers = `-- name: SoftDeleteUsers :exec
