@@ -1,5 +1,5 @@
 -- name: GetEmailVerificationToken :one
-select * from email_verification_tokens where id = $1;
+select * from email_verification_tokens where token = $1;
 
 -- name: GetEmailVerificationTokenByEmail :one
 select * from email_verification_tokens where email = $1;
@@ -9,3 +9,6 @@ insert into email_verification_tokens (token, email, expires_at, created_at) val
 
 -- name: DeleteEmailVerificationToken :exec
 delete from email_verification_tokens where token = $1;
+
+-- name: DeleteEmailVerificationTokensByEmail :exec
+delete from email_verification_tokens where email = $1;
