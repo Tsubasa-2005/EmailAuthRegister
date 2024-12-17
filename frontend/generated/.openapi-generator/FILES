@@ -1,11 +1,11 @@
-.openapi-generator-ignore
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
-models/CompleteUserRegistration200Response.ts
 models/CompleteUserRegistrationRequest.ts
+models/GetAllUsers200Response.ts
+models/Login400Response.ts
+models/LoginRequest.ts
 models/Ping200Response.ts
-models/SendEmailVerification500Response.ts
 models/SendEmailVerificationRequest.ts
 models/User.ts
 models/VerifyEmail200Response.ts

@@ -15,28 +15,28 @@
 
 import * as runtime from '../runtime';
 import type {
-  CompleteUserRegistration200Response,
   CompleteUserRegistrationRequest,
+  GetAllUsers200Response,
+  Login400Response,
+  LoginRequest,
   Ping200Response,
-  SendEmailVerification500Response,
   SendEmailVerificationRequest,
-  User,
   VerifyEmail200Response,
   VerifyEmailRequest,
 } from '../models/index';
 import {
-    CompleteUserRegistration200ResponseFromJSON,
-    CompleteUserRegistration200ResponseToJSON,
     CompleteUserRegistrationRequestFromJSON,
     CompleteUserRegistrationRequestToJSON,
+    GetAllUsers200ResponseFromJSON,
+    GetAllUsers200ResponseToJSON,
+    Login400ResponseFromJSON,
+    Login400ResponseToJSON,
+    LoginRequestFromJSON,
+    LoginRequestToJSON,
     Ping200ResponseFromJSON,
     Ping200ResponseToJSON,
-    SendEmailVerification500ResponseFromJSON,
-    SendEmailVerification500ResponseToJSON,
     SendEmailVerificationRequestFromJSON,
     SendEmailVerificationRequestToJSON,
-    UserFromJSON,
-    UserToJSON,
     VerifyEmail200ResponseFromJSON,
     VerifyEmail200ResponseToJSON,
     VerifyEmailRequestFromJSON,
@@ -45,6 +45,14 @@ import {
 
 export interface CompleteUserRegistrationOperationRequest {
     completeUserRegistrationRequest: CompleteUserRegistrationRequest;
+}
+
+export interface GetAllUsersRequest {
+    page: number;
+}
+
+export interface LoginOperationRequest {
+    loginRequest: LoginRequest;
 }
 
 export interface SendEmailVerificationOperationRequest {
@@ -63,7 +71,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Complete user registration
      */
-    async completeUserRegistrationRaw(requestParameters: CompleteUserRegistrationOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CompleteUserRegistration200Response>> {
+    async completeUserRegistrationRaw(requestParameters: CompleteUserRegistrationOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['completeUserRegistrationRequest'] == null) {
             throw new runtime.RequiredError(
                 'completeUserRegistrationRequest',
@@ -85,22 +93,32 @@ export class DefaultApi extends runtime.BaseAPI {
             body: CompleteUserRegistrationRequestToJSON(requestParameters['completeUserRegistrationRequest']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CompleteUserRegistration200ResponseFromJSON(jsonValue));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Complete user registration
      */
-    async completeUserRegistration(requestParameters: CompleteUserRegistrationOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CompleteUserRegistration200Response> {
-        const response = await this.completeUserRegistrationRaw(requestParameters, initOverrides);
-        return await response.value();
+    async completeUserRegistration(requestParameters: CompleteUserRegistrationOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.completeUserRegistrationRaw(requestParameters, initOverrides);
     }
 
     /**
      * Get all users
      */
-    async getAllUsersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<User>>> {
+    async getAllUsersRaw(requestParameters: GetAllUsersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAllUsers200Response>> {
+        if (requestParameters['page'] == null) {
+            throw new runtime.RequiredError(
+                'page',
+                'Required parameter "page" was null or undefined when calling getAllUsers().'
+            );
+        }
+
         const queryParameters: any = {};
+
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -119,15 +137,50 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UserFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetAllUsers200ResponseFromJSON(jsonValue));
     }
 
     /**
      * Get all users
      */
-    async getAllUsers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<User>> {
-        const response = await this.getAllUsersRaw(initOverrides);
+    async getAllUsers(requestParameters: GetAllUsersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAllUsers200Response> {
+        const response = await this.getAllUsersRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Login
+     */
+    async loginRaw(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['loginRequest'] == null) {
+            throw new runtime.RequiredError(
+                'loginRequest',
+                'Required parameter "loginRequest" was null or undefined when calling login().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/login`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LoginRequestToJSON(requestParameters['loginRequest']),
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Login
+     */
+    async login(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.loginRaw(requestParameters, initOverrides);
     }
 
     /**

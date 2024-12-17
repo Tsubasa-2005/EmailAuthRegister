@@ -26,41 +26,17 @@ export interface User {
      */
     id: number;
     /**
-     * Email address of the user.
-     * @type {string}
-     * @memberof User
-     */
-    email: string;
-    /**
-     * Encrypted password of the user.
-     * @type {string}
-     * @memberof User
-     */
-    password: string;
-    /**
      * Full name of the user.
      * @type {string}
      * @memberof User
      */
     name: string;
     /**
-     * User creation timestamp
-     * @type {Date}
+     * Email address of the user.
+     * @type {string}
      * @memberof User
      */
-    createdAt?: Date;
-    /**
-     * Last profile update timestamp
-     * @type {Date}
-     * @memberof User
-     */
-    updatedAt?: Date;
-    /**
-     * Soft-delete timestamp if the user is removed
-     * @type {Date}
-     * @memberof User
-     */
-    deletedAt?: Date;
+    email: string;
 }
 
 /**
@@ -68,9 +44,8 @@ export interface User {
  */
 export function instanceOfUser(value: object): value is User {
     if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('email' in value) || value['email'] === undefined) return false;
-    if (!('password' in value) || value['password'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('email' in value) || value['email'] === undefined) return false;
     return true;
 }
 
@@ -85,12 +60,8 @@ export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User
     return {
         
         'id': json['id'],
-        'email': json['email'],
-        'password': json['password'],
         'name': json['name'],
-        'createdAt': json['created_at'] == null ? undefined : (new Date(json['created_at'])),
-        'updatedAt': json['updated_at'] == null ? undefined : (new Date(json['updated_at'])),
-        'deletedAt': json['deleted_at'] == null ? undefined : (new Date(json['deleted_at'])),
+        'email': json['email'],
     };
 }
 
@@ -106,12 +77,8 @@ export function UserToJSONTyped(value?: User | null, ignoreDiscriminator: boolea
     return {
         
         'id': value['id'],
-        'email': value['email'],
-        'password': value['password'],
         'name': value['name'],
-        'created_at': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
-        'updated_at': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
-        'deleted_at': value['deletedAt'] == null ? undefined : ((value['deletedAt']).toISOString()),
+        'email': value['email'],
     };
 }
 
