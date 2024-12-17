@@ -23,6 +23,7 @@ func (s *BadRequest) SetMessage(val string) {
 }
 
 func (*BadRequest) completeUserRegistrationRes() {}
+func (*BadRequest) sendEmailVerificationRes()    {}
 
 type BearerAuth struct {
 	Token string
