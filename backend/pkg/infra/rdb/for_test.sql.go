@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const testCountActiveUsers = `-- name: TestCountActiveUsers :one
+select count(*) from users where deleted_at is null
+`
+
+func (q *Queries) TestCountActiveUsers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, testCountActiveUsers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const testCreateEmailVerificationToken = `-- name: TestCreateEmailVerificationToken :one
 insert into email_verification_tokens (token, email, expires_at, created_at) values ($1, $2, $3, $4) returning token, email, expires_at, created_at
 `
@@ -145,37 +156,24 @@ func (q *Queries) TestGetEmailVerificationTokenByEmail(ctx context.Context, emai
 	return i, err
 }
 
-const testGetUsers = `-- name: TestGetUsers :many
+const testGetUser = `-- name: TestGetUser :one
 select id, email, password, name, created_at, updated_at, deleted_at from users where id = $1 and deleted_at is null
 `
 
 // users
-func (q *Queries) TestGetUsers(ctx context.Context, id int64) ([]User, error) {
-	rows, err := q.db.Query(ctx, testGetUsers, id)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []User
-	for rows.Next() {
-		var i User
-		if err := rows.Scan(
-			&i.ID,
-			&i.Email,
-			&i.Password,
-			&i.Name,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) TestGetUser(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRow(ctx, testGetUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Password,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
 }
 
 const testGetUsersByEmail = `-- name: TestGetUsersByEmail :one
