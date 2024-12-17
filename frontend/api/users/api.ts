@@ -7,6 +7,7 @@ export async function getUsersAPI(
 ): Promise<{
     success: boolean;
     users: User[];
+    totalPage: number;
     message: string;
 }> {
     try {
@@ -15,6 +16,7 @@ export async function getUsersAPI(
         return {
             success: true,
             users: response.users,
+            totalPage: response.totalPage,
             message: "",
         };
     } catch (error: any) {
@@ -22,6 +24,7 @@ export async function getUsersAPI(
         return {
             success: false,
             users: [],
+            totalPage: 0,
             message: message,
         };
     }
