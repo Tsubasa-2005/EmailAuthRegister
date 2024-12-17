@@ -1,5 +1,5 @@
 -- users
--- name: TestGetUsers :many
+-- name: TestGetUser :one
 select * from users where id = $1 and deleted_at is null;
 
 -- name: TestGetUsersByEmail :one
@@ -7,6 +7,9 @@ select * from users where email = $1 and deleted_at is null;
 
 -- name: TestExistsUserByEmail :one
 select exists(select 1 from users where email = $1 and deleted_at is null);
+
+-- name: TestCountActiveUsers :one
+select count(*) from users where deleted_at is null;
 
 -- name: TestCreateUser :one
 insert into users (email, password, name, created_at, updated_at) values ($1, $2, $3, $4, $5) returning *;
