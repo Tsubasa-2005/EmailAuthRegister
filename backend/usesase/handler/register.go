@@ -61,6 +61,6 @@ func (h *Handler) CompleteUserRegistration(ctx context.Context, req *api.Complet
 	}
 
 	return &api.CompleteUserRegistrationOK{
-		Token: token,
+		SetCookie: token,
 	}, nil
 }

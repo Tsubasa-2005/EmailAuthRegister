@@ -111,10 +111,7 @@ func TestHandler_CompleteUserRegistration(t *testing.T) {
 		body, err = io.ReadAll(resp.Body)
 		require.NoError(t, err)
 
-		var res200 api.CompleteUserRegistrationOK
-		require.NoError(t, json.Unmarshal(body, &res200))
-
-		token, err := util.ParseToken(res200.Token)
+		token, err := util.ParseToken(resp.Header.Get("Set-Cookie"))
 		require.NoError(t, err)
 
 		claims := token.Claims.(jwt.MapClaims)
