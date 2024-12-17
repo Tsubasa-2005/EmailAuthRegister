@@ -15,6 +15,15 @@ import (
 )
 
 func (h *Handler) SendEmailVerification(ctx context.Context, req *api.SendEmailVerificationReq) (api.SendEmailVerificationRes, error) {
+	exists, err := h.repo.ExistsUserByEmail(ctx, req.Email)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to check user existence")
+	}
+	if exists {
+		return &api.BadRequest{
+			Message: "The email address is already in use",
+		}, nil
+	}
 	token := uuid.New()
 
 	if _, err := h.repo.CreateEmailVerificationToken(ctx, rdb.CreateEmailVerificationTokenParams{
@@ -29,7 +38,12 @@ func (h *Handler) SendEmailVerification(ctx context.Context, req *api.SendEmailV
 		return nil, errors.Wrap(err, "failed to create email verification token")
 	}
 
-	verificationURL := fmt.Sprintf("https://your-domain.com/verify?token=%s", token.String())
+	frontDomain, err := util.GetEnv("FRONT_DOMAIN")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get env")
+	}
+
+	verificationURL := fmt.Sprintf("%s/signup?id=%s", frontDomain, token.String())
 
 	template, err := domain.LoadEmailVerificationTemplates()
 	if err != nil {
