@@ -126,5 +126,10 @@ func TestHandler_CompleteUserRegistration(t *testing.T) {
 		require.True(t, ok)
 
 		require.NoError(t, rdb.New(dbConn).TestDeleteUser(ctx, id))
+
+		exists, err := rdb.New(dbConn).TestExistsEmailVerificationTokenByEmail(ctx, postParams.Email)
+		require.NoError(t, err)
+
+		require.Equal(t, false, exists)
 	})
 }

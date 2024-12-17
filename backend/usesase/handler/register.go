@@ -36,6 +36,11 @@ func (h *Handler) CompleteUserRegistration(ctx context.Context, req *api.Complet
 		return nil, errors.Wrap(err, "failed to generate password hash")
 	}
 
+	// 先に削除することでユーザーが作成されてtokenの削除が失敗したときにデータが残らないようにする。
+	if err := h.repo.DeleteEmailVerificationTokensByEmail(ctx, req.Email); err != nil {
+		return nil, errors.Wrap(err, "failed to delete email verification token")
+	}
+
 	user, err := h.repo.CreateUser(ctx, rdb.CreateUserParams{
 		Email:     req.Email,
 		Password:  hashPass,
