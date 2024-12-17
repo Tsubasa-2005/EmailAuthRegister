@@ -90,6 +90,17 @@ func (q *Queries) TestDeleteUser(ctx context.Context, id int64) error {
 	return err
 }
 
+const testExistsEmailVerificationTokenByEmail = `-- name: TestExistsEmailVerificationTokenByEmail :one
+select exists(select 1 from email_verification_tokens where email = $1)
+`
+
+func (q *Queries) TestExistsEmailVerificationTokenByEmail(ctx context.Context, email string) (bool, error) {
+	row := q.db.QueryRow(ctx, testExistsEmailVerificationTokenByEmail, email)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const testExistsUserByEmail = `-- name: TestExistsUserByEmail :one
 select exists(select 1 from users where email = $1 and deleted_at is null)
 `
