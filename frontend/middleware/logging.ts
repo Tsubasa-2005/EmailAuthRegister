@@ -9,10 +9,8 @@ interface LogData {
 }
 
 async function sendLogToServer(level: string, message: string, data: LogData) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
   try {
-    await fetch(`${baseUrl}/api/log`, {
+    await fetch("/api/log", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ level, message, data }),
