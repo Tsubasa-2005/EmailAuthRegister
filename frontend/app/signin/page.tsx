@@ -1,6 +1,26 @@
+'use client';
+
 import Link from "next/link";
+import useLoginAdapter from "@/app/signin/page.adapter";
+import React, {useState} from "react";
+import {useRouter} from "next/navigation";
 
 export default function SignIn() {
+    const router = useRouter();
+    const { error, isSubmitting, successMessage, login } = useLoginAdapter();
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const params = { loginRequest: { email, password } };
+        await login(params);
+
+        if (!error) {
+            router.push("/users");
+        }
+    };
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
             <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
@@ -8,58 +28,53 @@ export default function SignIn() {
                     Sign In to Your Account
                 </h2>
 
-                <form className="space-y-4">
+                {successMessage && (
+                    <p className="text-green-500 text-center mb-4">{successMessage}</p>
+                )}
+                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >
                             Email Address
                         </label>
                         <input
                             type="email"
                             id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                            className="w-full px-3 py-2 border rounded-md bg-gray-50 dark:bg-gray-700"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >
                             Password
                         </label>
                         <input
                             type="password"
                             id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                            className="w-full px-3 py-2 border rounded-md bg-gray-50 dark:bg-gray-700"
                         />
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                            <input
-                                id="remember-me"
-                                type="checkbox"
-                                className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-white"
-                            />
-                            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                                Remember me
-                            </label>
-                        </div>
-
-                        <div className="text-sm">
-                            <Link href="/forgot-password" className="font-medium text-black hover:text-gray-700 dark:text-white dark:hover:text-gray-300">
-                                Forgot password?
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div>
-                        <button
-                            type="submit"
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black dark:focus:ring-white"
-                        >
-                            Sign In
-                        </button>
-                    </div>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full bg-black dark:bg-white text-white dark:text-black py-2 rounded-md disabled:opacity-50"
+                    >
+                        {isSubmitting ? "Signing in..." : "Sign In"}
+                    </button>
                 </form>
 
                 <div className="mt-6">
