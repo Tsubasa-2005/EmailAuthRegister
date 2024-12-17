@@ -42,7 +42,7 @@ export default function useEmailVerificationAndRegisterAdapter() {
             setError(null);
             setIsSubmitting(true);
 
-            const token = await postCompleteRegistrationHelper(params, setError, ({setSuccessMessage, message: "Registration completed successfully"}));
+            await postCompleteRegistrationHelper(params, setError, ({setSuccessMessage, message: "Registration completed successfully"}));
             setIsSubmitting(false);
         },
         []
