@@ -14,7 +14,7 @@ import (
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/testutil/fixture"
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/util"
 	"github.com/Tsubasa-2005/EmailAuthResister/ui/api"
-	"github.com/Tsubasa-2005/EmailAuthResister/usesase/handler"
+	"github.com/Tsubasa-2005/EmailAuthResister/usecase/handler"
 	"github.com/go-faker/faker/v4"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"

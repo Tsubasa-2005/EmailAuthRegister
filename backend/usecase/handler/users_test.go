@@ -13,7 +13,7 @@ import (
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/testutil"
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/testutil/fixture"
 	"github.com/Tsubasa-2005/EmailAuthResister/ui/api"
-	"github.com/Tsubasa-2005/EmailAuthResister/usesase/handler"
+	"github.com/Tsubasa-2005/EmailAuthResister/usecase/handler"
 	"github.com/stretchr/testify/require"
 )
 

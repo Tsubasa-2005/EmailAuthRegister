@@ -9,7 +9,7 @@ import (
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/gmail"
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/infra"
 	"github.com/Tsubasa-2005/EmailAuthResister/ui/api"
-	"github.com/Tsubasa-2005/EmailAuthResister/usesase/handler"
+	"github.com/Tsubasa-2005/EmailAuthResister/usecase/handler"
 	"github.com/taxio/errors"
 )
 

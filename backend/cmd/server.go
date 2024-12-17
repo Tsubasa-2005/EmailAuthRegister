@@ -10,7 +10,7 @@ import (
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/infra"
 	"github.com/Tsubasa-2005/EmailAuthResister/pkg/middleware"
 	"github.com/Tsubasa-2005/EmailAuthResister/ui/api"
-	"github.com/Tsubasa-2005/EmailAuthResister/usesase/handler"
+	"github.com/Tsubasa-2005/EmailAuthResister/usecase/handler"
 	"github.com/go-faster/errors"
 	"github.com/spf13/cobra"
 )
